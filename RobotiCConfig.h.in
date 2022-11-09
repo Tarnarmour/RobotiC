@@ -1,0 +1,3 @@
+#define RobotiC_VERSION_MAJOR @Vector3D_VERSION_MAJOR@
+#define RobotiC_VERSION_MINOR @Vector3D_VERSION_MINOR@
+#define RobotiC_VERSION_PATH @Vector3D_VERSION_PATCH@
