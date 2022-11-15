@@ -14,6 +14,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(GTest REQUIRED)
 find_package(Eigen3 REQUIRED)
 
+include_directories(${EIGEN3_INCLUDE_DIR})
+
 add_library(${PROJECT_NAME} SHARED)
 
 target_sources(${PROJECT_NAME}
@@ -24,8 +26,7 @@ target_sources(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-    PUBLIC
-        Eigen3::Eigen
+    Eigen3::Eigen
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -44,5 +45,6 @@ target_sources(robotic_unittests
 target_link_libraries(robotic_unittests PRIVATE
           ${GTEST_LIBRARIES}
      ${GTEST_MAIN_LIBRARIES}
+     Eigen3::Eigen
     ${PROJECT_NAME}
     )
