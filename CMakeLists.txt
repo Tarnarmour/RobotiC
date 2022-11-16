@@ -11,6 +11,13 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+SET(CMAKE_INCLUDE_CURRENT_DIR ON)
+SET(CMAKE_AUTOMOC ON)
+SET(CMAKE_AUTOUIC ON)
+SET(CMAKE_AUTORCC ON)
+
+##### MAIN PROJECT #######
+
 find_package(GTest REQUIRED)
 find_package(Eigen3 REQUIRED)
 
@@ -34,6 +41,30 @@ target_include_directories(${PROJECT_NAME}
         ${CMAKE_CURRENT_BINARY_DIR}
 )
 
+##### VIZUALIZATION PROJECT #######
+
+find_package(Qt6 COMPONENTS Widgets Concurrent Gui 3DRender 3DInput 3DExtras 3DCore REQUIRED)
+
+add_executable(RobotiCViz
+    main.cpp
+    vizscene.h
+    vizscene.cpp
+    se3viz.h
+    se3viz.cpp
+)
+
+target_link_libraries(RobotiCViz
+    Qt6::Widgets
+    Qt6::Gui
+    Qt6::3DRender
+    Qt6::3DCore
+    Qt6::3DInput
+    Qt6::3DExtras
+    ${PROJECT_NAME}
+    Eigen3::Eigen
+)
+
+##### GTEST PROJECT #######
 
 include_directories(${GTEST_INCLUDE_DIRS})
 
@@ -43,8 +74,8 @@ target_sources(robotic_unittests
         transforms_unittests.cpp
     )
 target_link_libraries(robotic_unittests PRIVATE
-          ${GTEST_LIBRARIES}
-     ${GTEST_MAIN_LIBRARIES}
-     Eigen3::Eigen
+    ${GTEST_LIBRARIES}
+    ${GTEST_MAIN_LIBRARIES}
+    Eigen3::Eigen
     ${PROJECT_NAME}
     )

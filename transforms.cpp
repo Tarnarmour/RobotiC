@@ -1,6 +1,5 @@
 #include "transforms.h"
 #include "Eigen/Dense"
-#include "Eigen/Jacobi"
 
 
 using namespace Eigen;
