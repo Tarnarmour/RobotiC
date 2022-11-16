@@ -4,6 +4,7 @@
 // Basic QT stuff
 #include <QWidget>
 #include <QHBoxLayout>
+#include <QColor>
 
 // Qt 3D stuff
 #include <Qt3DCore/qattribute.h>
@@ -14,6 +15,8 @@
 #include <Qt3DExtras/qt3dwindow.h>
 #include <Qt3DExtras/qforwardrenderer.h>
 #include <Qt3DExtras/qorbitcameracontroller.h>
+#include <Qt3DExtras/QPlaneMesh>
+#include <Qt3DExtras/QPhongMaterial>
 
 #include <Qt3DRender/qcameralens.h>
 #include <Qt3DRender/qpointlight.h>
@@ -58,6 +61,27 @@ VizScene::VizScene(QWidget *parent) :
     camController->setCamera(cameraEntity);
 
      window->setRootEntity(root);
+
+     Qt3DExtras::QPlaneMesh *ground = new Qt3DExtras::QPlaneMesh();
+     ground->setWidth(2);
+     ground->setHeight(2);
+     Qt3DExtras::QPhongMaterial *material = new Qt3DExtras::QPhongMaterial();
+     material->setDiffuse(QColor::fromRgb(100, 100, 100));
+ //    material->setAmbient(mColor);
+ //    material->setShininess(1.0f);
+
+     Qt3DCore::QTransform *planeTransform = new Qt3DCore::QTransform();
+     planeTransform->setScale(1.0);
+     planeTransform->setRotation(QQuaternion::fromAxisAndAngle(QVector3D(1.0f, 0.0f, 0.0f), 90.0f));
+     planeTransform->setTranslation(QVector3D(0.0f, 0.0f, 0.0f));
+
+     Qt3DCore::QEntity *groundEntity = new Qt3DCore::QEntity();
+     groundEntity->addComponent(ground);
+     groundEntity->addComponent(material);
+     groundEntity->addComponent(planeTransform);
+     groundEntity->setEnabled(true);
+
+     groundEntity->setParent(root);
 
      SE3Viz *frame = new SE3Viz();
      frame->entity->setParent(root);
