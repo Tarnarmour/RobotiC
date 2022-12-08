@@ -28,8 +28,10 @@ add_library(${PROJECT_NAME} SHARED)
 target_sources(${PROJECT_NAME}
     PRIVATE
         transforms.cpp
+        robotic_utils.cpp
     PUBLIC
         transforms.h
+        robotic_utils.h
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -51,6 +53,8 @@ add_executable(RobotiCViz
     vizscene.cpp
     se3viz.h
     se3viz.cpp
+    trackballcameracontroller.cpp
+    trackballcameracontroller.h
 )
 
 target_link_libraries(RobotiCViz
@@ -72,6 +76,8 @@ add_executable(robotic_unittests)
 target_sources(robotic_unittests
     PRIVATE
         transforms_unittests.cpp
+        utils_unittests.cpp
+        toolsforunittests.cpp
     )
 target_link_libraries(robotic_unittests PRIVATE
     ${GTEST_LIBRARIES}
