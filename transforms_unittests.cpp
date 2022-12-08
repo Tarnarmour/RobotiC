@@ -186,83 +186,97 @@ TEST(SO3_get_axis, CheckThatIdentityMatrixReturnsXAxis0Theta)
     EXPECT_TRUE(compare_eigen_matrices(aa.v, v));
 }
 
-//TEST(SE3_DefaultConstructor, WhenDefaultConstructorIsUsed_CheckThatmMatrixIsSetToIdentity)
-//{
-//    SE3 T;
-//    Eigen::Matrix4d I = Eigen::Matrix4d::Identity();
-//    EXPECT_TRUE(I.isApprox(T.A));
-//}
+TEST(SE3_DefaultConstructor, WhenDefaultConstructorIsUsed_CheckThatmMatrixIsSetToIdentity)
+{
+    SE3 T;
+    Eigen::Matrix4d I = Eigen::Matrix4d::Identity();
+    EXPECT_TRUE(I.isApprox(T.get_A()));
+}
 
-//TEST(SE3_RConstructor, WhenConstructedWithRotationMatrix_CheckThatCorrectMatrixIsStored)
-//{
-//    Eigen::Matrix3d R;
-//    R << 1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9;
-//    SE3 T(R);
-//    Eigen::Matrix3d T_R = T.A({0, 1, 2}, {0, 1, 2});
-//    EXPECT_TRUE(R.isApprox(T_R));
-//}
+TEST(SE3_RConstructor, WhenConstructedWithRotationMatrix_CheckThatCorrectMatrixIsStored)
+{
+    SO3 R = rotx(1.0) + roty(2.0);
+    SE3 T(R);
+    EXPECT_TRUE(compare_eigen_matrices(R.get_R(), T.get_R().get_R()));
+}
 
-//TEST(SE3_pConstructor, WhenConstructedWith3Vector_CheckThatCorrectMatrixIsStored)
-//{
-//    Eigen::Vector3d p{1, 2, 3};
-//    SE3 T(p);
-//    EXPECT_TRUE(p.isApprox(T.A({0, 1, 2}, {3})));
-//}
+TEST(SE3_pConstructor, WhenConstructedWith3Vector_CheckThatCorrectMatrixIsStored)
+{
+    Eigen::Vector3d p{1, 2, 3};
+    SE3 T(p);
+    EXPECT_TRUE(compare_eigen_matrices(p, T.get_p()));
+}
 
-//TEST(SE3_RpConstructor, WhenConstructedWithMatrixAnd3Vector_CheckThatCorrectMatrixIsStored)
-//{
-//    Eigen::Matrix3d R{{1, 2, 3}, {4 ,5, 6}, {7, 8, 9}};
-//    Eigen::Vector3d p{1, 2, 3};
-//    SE3 T(R, p);
-//    Eigen::Matrix4d A{{1, 2, 3, 1}, {4, 5, 6, 2}, {7, 8, 9, 3}, {0, 0, 0, 1}};
-//    EXPECT_TRUE(A.isApprox(T.A));
-//}
+TEST(SE3_RpConstructor, WhenConstructedWithSO3And3Vector_CheckThatCorrectMatrixIsStored)
+{
+    SO3 R = from_rpy(1, 2, 3);
+    Eigen::Vector3d p{1, 2, 3};
+    SE3 T(R, p);
+    Eigen::Matrix4d A;
+    A << 0.411982245665683, 0.05872664492762098, 0.9092974268256817, 1.0, -0.6812427202564033, -0.642872836134547, 0.35017548837401463, 2.0, 0.6051272472413688, -0.7637183366502791, -0.2248450953661529, 3.0, 0.0, 0.0, 0.0, 1.0;
+    EXPECT_TRUE(compare_eigen_matrices(A, T.get_A()));
+}
 
-//TEST(SE3_pRConstructor, WhenConstructedWith3VectorAndMatrix_CheckThatCorrectMatrixIsStored)
-//{
-//    Eigen::Matrix3d R{{1, 2, 3}, {4 ,5, 6}, {7, 8, 9}};
-//    Eigen::Vector3d p{1, 2, 3};
-//    SE3 T(p, R);
-//    Eigen::Matrix4d A{{1, 2, 3, 1}, {4, 5, 6, 2}, {7, 8, 9, 3}, {0, 0, 0, 1}};
-//    EXPECT_TRUE(A.isApprox(T.A));
-//}
+TEST(SE3_AConstructor, WhenConstructedWithAMatrix_ExpectCorrectValueStored)
+{
+    Eigen::Matrix4d A = Eigen::Matrix4d::Random();
+    SE3 T(A);
+    EXPECT_TRUE(compare_eigen_matrices(A, T.get_A()));
+}
 
-//TEST(SE3_AConstructor, WhenConstructedWithAMatrix_ExpectCorrectValueStored)
-//{
-//    Eigen::Matrix4d A = Eigen::Matrix4d::Random();
-//    SE3 T(A);
-//    EXPECT_TRUE(A.isApprox(T.A));
-//}
+TEST(SE3_inv, WhenMemberMethodInvCalled_ExpectAToBeAnInverseOfOriginalMatrix)
+{
+    SE3 A(from_rpy(1, 2, 3), Eigen::Vector3d::Random());
+    SE3 Ainv = A.inv();
+    Eigen::Matrix4d I = Eigen::Matrix4d::Identity();
+    Eigen::Matrix4d AiA = Ainv.get_A() * A.get_A();
+    EXPECT_TRUE(compare_eigen_matrices(AiA, I));
+}
 
-//TEST(SE3_get_R, WhenInitialized_CheckThatGetRReturnsCorrectly)
-//{
-//    SE3 T;
-//    Eigen::Matrix3d R;
-//    R = T.get_R();
-//    EXPECT_TRUE(R.isApprox(Eigen::Matrix3d::Identity()));
-//}
+TEST(transl, CallWithVector_ExpectThatSE3ObjectIsCorrect)
+{
+    Eigen::Vector3d p{1, 2, 3};
+    SE3 T = transl(p);
+    Eigen::Matrix4d A;
+    A << 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 2.0, 0.0, 0.0, 1.0, 3.0, 0.0, 0.0, 0.0, 1.0;
+    EXPECT_TRUE(compare_eigen_matrices(T.get_A(), A));
+}
 
-//TEST(SE3_inv, WhenMemberMethodInvCalled_ExpectAToBeAnInverseOfOriginalMatrix)
-//{
-//    Eigen::Matrix4d A = Eigen::Matrix4d::Identity();
-//    Eigen::Matrix3d R{{0, -1, 0}, {1, 0, 0}, {0, 0, 1}};
-//    Eigen::Vector3d p{1, 2, 3};
-//    A({0, 1, 2}, {0, 1, 2}) = R;
-//    A({0, 1, 2}, {3}) = p;
-//    SE3 T(A);
-//    T.inv();
-//    Eigen::Matrix4d B = A * T.A;
-//    EXPECT_TRUE(B.isApprox(Eigen::Matrix4d::Identity()));
-//}
+TEST(transl, CallWith3Doubles_ExpectSE3ObjectToBeCorrect)
+{
+    double x{1.0};
+    double y{2.0};
+    double z{3.0};
+    SE3 T = transl(x, y, z);
+    Eigen::Matrix4d A;
+    A << 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 2.0, 0.0, 0.0, 1.0, 3.0, 0.0, 0.0, 0.0, 1.0;
+    EXPECT_TRUE(compare_eigen_matrices(T.get_A(), A));
+}
 
-//TEST(trotx, CallWithThetaValue_ExpectCorrectSE3Object)
-//{
-//    double theta = 2.0;
-//    Eigen::Matrix4d A{{1.0, 0.0, 0.0, 0.0},
-//                      {0, -0.41614684, -0.90929743, 0.0},
-//                      {0.,  0.90929743, -0.41614684, 0.0},
-//                      {0.0, 0.0, 0.0, 1.0}};
-//    SE3 T = trotx(theta);
-//    EXPECT_TRUE(T.A.isApprox(A));
-//}
+TEST(trotx, CallWithThetaValue_ExpectCorrectSE3Object)
+{
+    double theta = 2.0;
+    SE3 A = trotx(theta);
+    Eigen::Matrix4d B;
+    B << 1.0, 0.0, 0.0, 0.0, 0.0, -0.4161468365471424, -0.9092974268256817, 0.0, 0.0, 0.9092974268256817, -0.4161468365471424, 0.0, 0.0, 0.0, 0.0, 1.0;
+    EXPECT_TRUE(compare_eigen_matrices(A.get_A(), B));
+}
+
+TEST(troty, CallWithThetaValue_ExpectCorrectSE3Object)
+{
+    double theta = 2.0;
+    SE3 A = troty(theta);
+    Eigen::Matrix4d B;
+    B << -0.4161468365471424, 0.0, 0.9092974268256817, 0.0, 0.0, 1.0, 0.0, 0.0, -0.9092974268256817, 0.0, -0.4161468365471424, 0.0, 0.0, 0.0, 0.0, 1.0;
+    EXPECT_TRUE(compare_eigen_matrices(A.get_A(), B));
+}
+
+TEST(trotz, CallWithThetaValue_ExpectCorrectSE3Object)
+{
+    double theta = 2.0;
+    SE3 A = trotz(theta);
+    Eigen::Matrix4d B;
+    B << -0.4161468365471424, -0.9092974268256817, 0.0, 0.0, 0.9092974268256817, -0.4161468365471424, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0;
+    EXPECT_TRUE(compare_eigen_matrices(A.get_A(), B));
+}
 

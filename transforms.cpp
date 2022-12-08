@@ -180,36 +180,50 @@ SE3::SE3(Vector3d p)
     _A({0, 1, 2}, {3}) = p;
 }
 
+SE3::SE3(SO3 R, Vector3d p)
+{
+    _A << R.get_R(), p, 0, 0, 0, 1;
+}
+
 SE3::SE3(Matrix4d A) : _A{A}
 {
 
 }
 
-Matrix3d SE3::get_R() const
+SO3 SE3::get_R() const
 {
-    return A({0, 1, 2}, {0, 1, 2});
+    return SO3(_A({0, 1, 2}, {0, 1, 2}));
 }
 
 Vector3d SE3::get_p() const
 {
-    Vector3d p = A({0, 1, 2}, {3});
+    Vector3d p = _A({0, 1, 2}, {3});
     return p;
 }
 
-void SE3::inv()
+Matrix4d SE3::get_A() const
 {
-    Matrix3d R = this->get_R();
-    Vector3d p = this->get_p();
-    A << R.transpose(), -R.transpose() * p, 0, 0, 0, 1;
+    return _A;
 }
 
-Matrix4d inv(const SE3 T)
+SE3 SE3::inv()
 {
-    Matrix3d R = T.get_R();
-    Vector3d p = T.get_p();
+    Matrix3d R = this->get_R().get_R();
+    Vector3d p = this->get_p();
     Matrix4d A;
     A << R.transpose(), -R.transpose() * p, 0, 0, 0, 1;
-    return A;
+    return SE3(A);
+}
+
+SE3 transl(Vector3d p)
+{
+    return SE3(p);
+}
+
+SE3 transl(double x, double y, double z)
+{
+    Vector3d p{x, y, z};
+    return SE3(p);
 }
 
 SE3 trotx(double theta)
@@ -249,14 +263,4 @@ SE3 trotz(double theta)
         0.0, 0.0, 0.0, 1.0;
     SE3 T = SE3(A);
     return A;
-}
-
-Vector4d convert_R_to_quaternion(Matrix3d R)
-{
-    Vector4d q;
-    q(0) = 0.5 * std::sqrt(std::abs(R(0, 0) + R(1, 1) + R(2, 2) + 1.0));
-    q(1) = 0.5 * ru::sign(R(2, 1) - R(1, 2)) * std::sqrt(std::abs(R(0, 0) - R(1, 1) - R(2, 2) + 1));
-    q(2) = 0.5 * ru::sign(R(0, 2) - R(2, 0)) * std::sqrt(std::abs(R(1, 1) - R(2, 2) - R(0, 0) + 1));
-    q(3) = 0.5 * ru::sign(R(1, 0) - R(0, 2)) * std::sqrt(std::abs(R(2, 2) - R(0, 0) - R(1, 1) + 1));
-    return q;
 }

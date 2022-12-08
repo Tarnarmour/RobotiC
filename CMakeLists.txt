@@ -29,9 +29,11 @@ target_sources(${PROJECT_NAME}
     PRIVATE
         transforms.cpp
         robotic_utils.cpp
+        kinematics.cpp
     PUBLIC
         transforms.h
         robotic_utils.h
+        kinematics.h
 )
 
 target_link_libraries(${PROJECT_NAME}

@@ -46,11 +46,10 @@ class SE3
 {
 public:
     SE3();
-    SE3(Eigen::Matrix3d R);
+    SE3(SO3 R);
     SE3(Eigen::Vector3d p);
-    SE3(Eigen::Matrix3d R, Eigen::Vector3d p);
-    SE3(Eigen::Vector3d p, Eigen::Matrix3d R);
-    SE3(Eigen::Matrix4d T);
+    SE3(SO3 R, Eigen::Vector3d p);
+    SE3(Eigen::Matrix4d A);
 
     SE3 operator-() const;
 
@@ -58,7 +57,7 @@ public:
     Eigen::Vector3d get_p() const;
     Eigen::Matrix4d get_A() const;
 
-    void inv();
+    SE3 inv();
 protected:
     Eigen::Matrix4d _A;
 };
