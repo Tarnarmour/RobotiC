@@ -1,5 +1,6 @@
 // My stuff
 #include "vizscene.h"
+#include "trackballcameracontroller.h"
 
 // Basic QT stuff
 #include <QWidget>
@@ -55,23 +56,23 @@ VizScene::VizScene(QWidget *parent) :
     lightTransform->setTranslation(QVector3D(200.0f, 200.0f, 200.0f));
     lightEntity->addComponent(lightTransform);
 
-    Qt3DExtras::QOrbitCameraController *camController = new Qt3DExtras::QOrbitCameraController(root);
-    camController->setLinearSpeed( 50.0f );
-    camController->setLookSpeed( 180.0f );
+    TrackballCameraController *camController = new TrackballCameraController(root);
     camController->setCamera(cameraEntity);
+    camController->setWindowSize(this->size());
 
      window->setRootEntity(root);
 
      Qt3DExtras::QPlaneMesh *ground = new Qt3DExtras::QPlaneMesh();
-     ground->setWidth(2);
-     ground->setHeight(2);
+     ground->setWidth(100);
+     ground->setHeight(100);
      Qt3DExtras::QPhongMaterial *material = new Qt3DExtras::QPhongMaterial();
-     material->setDiffuse(QColor::fromRgb(100, 100, 100));
+     QColor groundColor(200, 200, 200, 100);
+     material->setDiffuse(groundColor);
  //    material->setAmbient(mColor);
  //    material->setShininess(1.0f);
 
      Qt3DCore::QTransform *planeTransform = new Qt3DCore::QTransform();
-     planeTransform->setScale(1.0);
+     planeTransform->setScale(100.0);
      planeTransform->setRotation(QQuaternion::fromAxisAndAngle(QVector3D(1.0f, 0.0f, 0.0f), 90.0f));
      planeTransform->setTranslation(QVector3D(0.0f, 0.0f, 0.0f));
 
@@ -82,7 +83,6 @@ VizScene::VizScene(QWidget *parent) :
      groundEntity->setEnabled(true);
 
      groundEntity->setParent(root);
-
-     SE3Viz *frame = new SE3Viz();
-     frame->entity->setParent(root);
+     SE3Viz* viz = new SE3Viz();
+     viz->entity->setParent(root);
 }

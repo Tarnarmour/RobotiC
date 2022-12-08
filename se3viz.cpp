@@ -19,6 +19,7 @@ SE3Viz::SE3Viz()
 
     transform = new Qt3DCore::QTransform();
     transform->setTranslation(QVector3D(0.0, 0.0, 0.0));
+    transform->setScale(10.0);
     entity = new Qt3DCore::QEntity();
     Qt3DExtras::QPhongMaterial *material = new Qt3DExtras::QPhongMaterial();
     material->setDiffuse(QColor(QColor::fromRgb(255, 0, 0)));
