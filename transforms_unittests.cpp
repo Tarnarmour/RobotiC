@@ -280,3 +280,33 @@ TEST(trotz, CallWithThetaValue_ExpectCorrectSE3Object)
     EXPECT_TRUE(compare_eigen_matrices(A.get_A(), B));
 }
 
+TEST(SE3_plus, ExpectCompositionOfTwoSE3Correct)
+{
+    SE3 T1 = trotx(5.0) + troty(1.0) + trotz(-1.0) + transl(5, 3, 2);
+    Eigen::Matrix4d A;
+    A << 0.2919265817264289, 0.4546487134128409, 0.8414709848078965, 4.50652101848646, -0.6746671862904388, -0.5257254561328563, 0.5181089967534271, -3.9142943063439084, 0.6779403060922585, -0.7189626500493255, 0.15326333289337707, 1.5393402461000703, 0.0, 0.0, 0.0, 1.0;
+    EXPECT_TRUE(compare_eigen_matrices(A, T1.get_A()));
+}
+
+TEST(SE3_minus, ExpectCompositionOfTwoSE3Correct)
+{
+    SE3 T1 = trotx(5.0) - troty(1.0) + trotz(-1.0) - transl(5, 3, 2);
+    Eigen::Matrix4d A;
+    A << 0.2919265817264289, 0.4546487134128409, -0.8414709848078965, -1.1406370792548741, 0.19728018918143636, 0.8322521219196103, 0.5181089967534271, -4.519375305172867, 0.9358736014217194, -0.31725534345752876, 0.15326333289337707, -4.034128642522765, 0.0, 0.0, 0.0, 1.0;
+    EXPECT_TRUE(compare_eigen_matrices(A, T1.get_A()));
+}
+
+TEST(SE3_equals, ExpectSameMatrixToEvaluateAsEqual)
+{
+    SE3 T1 = trotx(1.0);
+    SE3 T2 = trotx(1.0);
+    EXPECT_TRUE(T1 == T2);
+}
+
+TEST(SE3_equals, ExpectDifferentMatrixToEvaluateAsFalse)
+{
+    SE3 T1 = trotx(1.0);
+    SE3 T2 = trotx(12);
+    EXPECT_FALSE(T1 == T2);
+}
+

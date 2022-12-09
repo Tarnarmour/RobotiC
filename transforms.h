@@ -57,9 +57,12 @@ public:
     Eigen::Vector3d get_p() const;
     Eigen::Matrix4d get_A() const;
 
-    SE3 inv();
+    SE3 inv() const;
 protected:
-    Eigen::Matrix4d _A;
+    Eigen::Matrix4d _A{{1, 0, 0, 0},
+                       {0, 1, 0, 0},
+                       {0, 0, 1, 0},
+                       {0, 0, 0, 1}};
 };
 
 SE3 transl(Eigen::Vector3d p);
@@ -70,6 +73,6 @@ SE3 trotz(double theta);
 
 SE3 operator+ (const SE3 lh, const SE3 rh);
 SE3 operator- (const SE3 lh, const SE3 rh);
-SE3 operator== (const SE3 lh, const SE3 rh);
+bool operator== (const SE3 lh, const SE3 rh);
 
 #endif // TRANSFORMS_H

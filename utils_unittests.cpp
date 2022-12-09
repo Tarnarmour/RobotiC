@@ -22,7 +22,7 @@ TEST(enforce_orthonormal, WhenCalledOnNonOrthonormalMatrix_ExpectOutputToBeOrtho
     Eigen::MatrixXd A = Eigen::Matrix3d::Identity() + Eigen::Matrix3d::Random() * 0.1;
     Eigen::Matrix3d ATA = A.transpose() * A;
     Eigen::Matrix3d I = Eigen::Matrix3d::Identity();
-    ASSERT_FALSE(compare_eigen_matrices(ATA, I));
+    ASSERT_FALSE(compare_eigen_matrices(ATA, I, 1e-10, false));
     Eigen::Matrix3d B = ru::enforce_orthonormal(A);
     Eigen::Matrix3d BTB = B.transpose() * B;
     EXPECT_TRUE(compare_eigen_matrices(BTB, I));

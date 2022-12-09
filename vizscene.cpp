@@ -2,6 +2,11 @@
 #include "vizscene.h"
 #include "trackballcameracontroller.h"
 
+#include "Eigen/Dense"
+#include "kinematics.h"
+#include <vector>
+#include "serialarmviz.h"
+
 // Basic QT stuff
 #include <QWidget>
 #include <QHBoxLayout>
@@ -57,6 +62,7 @@ VizScene::VizScene(QWidget *parent) :
     lightEntity->addComponent(lightTransform);
 
     TrackballCameraController *camController = new TrackballCameraController(root);
+//    Qt3DExtras::QOrbitCameraController *camController = new Qt3DExtras::QOrbitCameraController(root);
     camController->setCamera(cameraEntity);
     camController->setWindowSize(this->size());
 
@@ -68,13 +74,11 @@ VizScene::VizScene(QWidget *parent) :
      Qt3DExtras::QPhongMaterial *material = new Qt3DExtras::QPhongMaterial();
      QColor groundColor(200, 200, 200, 100);
      material->setDiffuse(groundColor);
- //    material->setAmbient(mColor);
- //    material->setShininess(1.0f);
 
      Qt3DCore::QTransform *planeTransform = new Qt3DCore::QTransform();
      planeTransform->setScale(100.0);
      planeTransform->setRotation(QQuaternion::fromAxisAndAngle(QVector3D(1.0f, 0.0f, 0.0f), 90.0f));
-     planeTransform->setTranslation(QVector3D(0.0f, 0.0f, 0.0f));
+     planeTransform->setTranslation(QVector3D(0.0f, 0.0f, -200));
 
      Qt3DCore::QEntity *groundEntity = new Qt3DCore::QEntity();
      groundEntity->addComponent(ground);
@@ -83,6 +87,21 @@ VizScene::VizScene(QWidget *parent) :
      groundEntity->setEnabled(true);
 
      groundEntity->setParent(root);
-     SE3Viz* viz = new SE3Viz();
-     viz->entity->setParent(root);
+
+     std::vector<std::vector<double>> dh{{0, 0, 1, 0}, {0, 1.5, 1, 0},
+                                         {0.0, 1.5, 1, 0}, {0.0, 1.5, 1, 0}};
+
+     _arm = SerialArm(dh);
+     _viz = SerialArmViz(_arm, root);
+
+     Eigen::Vector4d q{0.01, 0.01, 0.01, 0.01};
+
+     _viz.update(q);
+
+}
+
+void VizScene::update()
+{
+    Eigen::VectorXd q = Eigen::VectorXd::Random(_arm.get_n());
+    _viz.update(q);
 }

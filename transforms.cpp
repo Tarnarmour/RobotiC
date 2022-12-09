@@ -206,7 +206,7 @@ Matrix4d SE3::get_A() const
     return _A;
 }
 
-SE3 SE3::inv()
+SE3 SE3::inv() const
 {
     Matrix3d R = this->get_R().get_R();
     Vector3d p = this->get_p();
@@ -263,4 +263,21 @@ SE3 trotz(double theta)
         0.0, 0.0, 0.0, 1.0;
     SE3 T = SE3(A);
     return A;
+}
+
+SE3 operator+ (const SE3 lh, const SE3 rh)
+{
+    Matrix4d A = lh.get_A() * rh.get_A();
+    return SE3(A);
+}
+
+SE3 operator- (const SE3 lh, const SE3 rh)
+{
+    Matrix4d A = lh.get_A() * rh.inv().get_A();
+    return SE3(A);
+}
+
+bool operator== (const SE3 lh, const SE3 rh)
+{
+    return lh.get_A().isApprox(rh.get_A());
 }

@@ -2,6 +2,8 @@
 #define VIZSCENE_H
 
 #include "se3viz.h"
+#include "kinematics.h"
+#include "serialarmviz.h"
 
 #include <QtCore>
 #include <Qt3DExtras/qt3dwindow.h>
@@ -14,14 +16,14 @@ class VizScene : public QWidget
     Q_OBJECT
 public:
     explicit VizScene(QWidget *parent = 0);
-
+    void update();
 public slots:
 
 private:
     Qt3DExtras::Qt3DWindow *window = nullptr;
     Qt3DCore::QEntity *root;
-
-
+    SerialArm _arm;
+    SerialArmViz _viz;
 };
 
 

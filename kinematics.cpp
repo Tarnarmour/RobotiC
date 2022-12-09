@@ -8,21 +8,42 @@
 #include <vector>
 #include <stdexcept>
 
+SerialArm::SerialArm() :
+    _dh{{0, 0, 1, 0}}, _jt{'r'}
+{
+    _n = 1;
+}
+
+SerialArm::SerialArm(std::vector<std::vector<double>> dh) :
+    _dh(dh)
+{
+    _n = dh.size();
+    _jt = std::vector<char> (_n, 'r');
+}
 
 SerialArm::SerialArm(std::vector<std::vector<double>> dh, std::vector<char> jt) :
     _dh(dh), _jt(jt)
 {
     _n = dh.size();
+    if (_dh.size() != _jt.size())
+    {
+        throw std::length_error("SerialArm Constructor: joint type and joint limits not the same length!");
+    }
 }
 
-std::vector<std::vector<double>> SerialArm::get_dh()
+std::vector<std::vector<double>> SerialArm::get_dh() const
 {
     return _dh;
 }
 
-std::vector<char> SerialArm::get_jt()
+std::vector<char> SerialArm::get_jt() const
 {
     return _jt;
+}
+
+int SerialArm::get_n() const
+{
+    return _n;
 }
 
 SE3 SerialArm::fk(Eigen::VectorXd q) const
@@ -86,3 +107,5 @@ SE3 SerialArm::fk(Eigen::VectorXd q, int istart, int iend) const
     // return
     return T;
 }
+
+

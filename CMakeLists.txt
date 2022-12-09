@@ -57,6 +57,8 @@ add_executable(RobotiCViz
     se3viz.cpp
     trackballcameracontroller.cpp
     trackballcameracontroller.h
+    serialarmviz.cpp
+    serialarmviz.h
 )
 
 target_link_libraries(RobotiCViz
@@ -80,6 +82,7 @@ target_sources(robotic_unittests
         transforms_unittests.cpp
         utils_unittests.cpp
         toolsforunittests.cpp
+        kinematics_unittests.cpp
     )
 target_link_libraries(robotic_unittests PRIVATE
     ${GTEST_LIBRARIES}
