@@ -1,6 +1,7 @@
 // My stuff
 #include "vizscene.h"
 #include "trackballcameracontroller.h"
+#include "plane.h"
 
 #include "Eigen/Dense"
 #include "kinematics.h"
@@ -10,7 +11,9 @@
 // Basic QT stuff
 #include <QWidget>
 #include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QColor>
+#include <QSlider>
 
 // Qt 3D stuff
 #include <Qt3DCore/qattribute.h>
@@ -29,7 +32,7 @@
 #include <Qt3DRender/qcamera.h>
 
 
-VizScene::VizScene(QWidget *parent) :
+VizScene::VizScene(QWidget *parent, SerialArm arm) :
     QWidget{parent}
 {
     window = new Qt3DExtras::Qt3DWindow();
@@ -40,18 +43,19 @@ VizScene::VizScene(QWidget *parent) :
     this->setLayout(layout);
 
     window->defaultFrameGraph()->setClearColor(QColor(QColor::fromRgb(0.0, 0.0, 0.0)));
-
     root = new Qt3DCore::QEntity();
+    window->setRootEntity(root);
 
 
     // Camera
     Qt3DRender::QCamera *cameraEntity = window->camera();
 
-    cameraEntity->lens()->setPerspectiveProjection(45.0f, 16.0f/9.0f, 0.1f, 1000.0f);
-    cameraEntity->setPosition(QVector3D(200.0f, 0, 75));
+    cameraEntity->lens()->setPerspectiveProjection(45.0f, 16.0f/9.0f, 0.1f, 5000.0f);
+    cameraEntity->setPosition(QVector3D(0.0f, 0, 500));
     cameraEntity->setUpVector(QVector3D(0, 0, 1.0f));
     cameraEntity->setViewCenter(QVector3D(0, 0, 50));
 
+    // Lighting
     Qt3DCore::QEntity *lightEntity = new Qt3DCore::QEntity(root);
     Qt3DRender::QPointLight *light = new Qt3DRender::QPointLight(lightEntity);
     light->setColor("white");
@@ -61,42 +65,26 @@ VizScene::VizScene(QWidget *parent) :
     lightTransform->setTranslation(QVector3D(200.0f, 200.0f, 200.0f));
     lightEntity->addComponent(lightTransform);
 
+    // Camera Controller
     TrackballCameraController *camController = new TrackballCameraController(root);
-//    Qt3DExtras::QOrbitCameraController *camController = new Qt3DExtras::QOrbitCameraController(root);
+    //    Qt3DExtras::QOrbitCameraController *camController = new Qt3DExtras::QOrbitCameraController(root);
     camController->setCamera(cameraEntity);
     camController->setWindowSize(this->size());
 
-     window->setRootEntity(root);
+    // Ground Plane
+    Plane groundPlane(root);
 
-     Qt3DExtras::QPlaneMesh *ground = new Qt3DExtras::QPlaneMesh();
-     ground->setWidth(100);
-     ground->setHeight(100);
-     Qt3DExtras::QPhongMaterial *material = new Qt3DExtras::QPhongMaterial();
-     QColor groundColor(200, 200, 200, 100);
-     material->setDiffuse(groundColor);
+    // Serial Arm
+    _arm = arm;
+    _viz = SerialArmViz(_arm, root);
+    int n = _arm.get_n();
 
-     Qt3DCore::QTransform *planeTransform = new Qt3DCore::QTransform();
-     planeTransform->setScale(100.0);
-     planeTransform->setRotation(QQuaternion::fromAxisAndAngle(QVector3D(1.0f, 0.0f, 0.0f), 90.0f));
-     planeTransform->setTranslation(QVector3D(0.0f, 0.0f, -200));
+    // Slider Controllers
 
-     Qt3DCore::QEntity *groundEntity = new Qt3DCore::QEntity();
-     groundEntity->addComponent(ground);
-     groundEntity->addComponent(material);
-     groundEntity->addComponent(planeTransform);
-     groundEntity->setEnabled(true);
 
-     groundEntity->setParent(root);
+//    Eigen::Vector4d q{0.01, 1.5, 0.01, -1.5};
 
-     std::vector<std::vector<double>> dh{{0, 0, 1, 0}, {0, 1.5, 1, 0},
-                                         {0.0, 1.5, 1, 0}, {0.0, 1.5, 1, 0}};
-
-     _arm = SerialArm(dh);
-     _viz = SerialArmViz(_arm, root);
-
-     Eigen::Vector4d q{0.01, 0.01, 0.01, 0.01};
-
-     _viz.update(q);
+//    _viz.update(q);
 
 }
 

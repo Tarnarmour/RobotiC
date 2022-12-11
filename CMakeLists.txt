@@ -59,6 +59,8 @@ add_executable(RobotiCViz
     trackballcameracontroller.h
     serialarmviz.cpp
     serialarmviz.h
+    plane.cpp
+    plane.h
 )
 
 target_link_libraries(RobotiCViz

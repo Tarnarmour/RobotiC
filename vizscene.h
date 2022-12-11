@@ -1,7 +1,6 @@
 #ifndef VIZSCENE_H
 #define VIZSCENE_H
 
-#include "se3viz.h"
 #include "kinematics.h"
 #include "serialarmviz.h"
 
@@ -15,7 +14,7 @@ class VizScene : public QWidget
 {
     Q_OBJECT
 public:
-    explicit VizScene(QWidget *parent = 0);
+    explicit VizScene(QWidget *parent = 0, SerialArm arm = SerialArm());
     void update();
 public slots:
 
