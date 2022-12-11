@@ -61,6 +61,8 @@ add_executable(RobotiCViz
     serialarmviz.h
     plane.cpp
     plane.h
+    sliderbar.h
+    sliderbar.cpp
 )
 
 target_link_libraries(RobotiCViz

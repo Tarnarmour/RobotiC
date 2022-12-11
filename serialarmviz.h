@@ -19,9 +19,9 @@ public:
     SerialArmViz();
     SerialArmViz(SerialArm arm, Qt3DCore::QEntity* parent);
     void update(Eigen::Vector4d q);
-private:
     SerialArm _arm;
     int _n;
+private:
 
     std::vector<Qt3DCore::QEntity*> _jointList;
     std::vector<Qt3DCore::QEntity*> _linkList;

@@ -2,6 +2,7 @@
 #include "vizscene.h"
 #include "trackballcameracontroller.h"
 #include "plane.h"
+#include "sliderbar.h"
 
 #include "Eigen/Dense"
 #include "kinematics.h"
@@ -80,7 +81,8 @@ VizScene::VizScene(QWidget *parent, SerialArm arm) :
     int n = _arm.get_n();
 
     // Slider Controllers
-
+    SliderBar *controlPanel = new SliderBar(_viz);
+    layout->addWidget(controlPanel);
 
 //    Eigen::Vector4d q{0.01, 1.5, 0.01, -1.5};
 
