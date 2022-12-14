@@ -25,7 +25,7 @@ SerialArmViz::SerialArmViz(SerialArm arm, Qt3DCore::QEntity* parent)
 
     Qt3DExtras::QCuboidMesh *cubeMesh;
     cubeMesh = new Qt3DExtras::QCuboidMesh();
-    double size{10};
+    double size{20};
     cubeMesh->setXExtent(size * 1);
     cubeMesh->setYExtent(size * 1);
     cubeMesh->setZExtent(size * 1);
@@ -35,7 +35,7 @@ SerialArmViz::SerialArmViz(SerialArm arm, Qt3DCore::QEntity* parent)
 
     Eigen::VectorXd q = Eigen::VectorXd::Zero(_n);
 
-    double s = 1;
+    double s = 50;
 
     for (int i = 0; i < _n; i++)
     {
@@ -58,7 +58,7 @@ SerialArmViz::SerialArmViz(SerialArm arm, Qt3DCore::QEntity* parent)
 
 void SerialArmViz::update(Eigen::Vector4d q)
 {
-    double s = 300;
+    double s = 50;
     for (int i = 0; i < _n; i++)
     {
         SE3 T = _arm.fk(q, i + 1);

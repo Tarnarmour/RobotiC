@@ -21,7 +21,7 @@ Plane::Plane(Qt3DCore::QEntity *parent)
     _transform = new Qt3DCore::QTransform();
     _transform->setScale(1.0);
     _transform->setRotationX(90.0);
-    _transform->setTranslation(QVector3D(0, 0, 0));
+    _transform->setTranslation(QVector3D(0, 0, -100));
 
     _entity = new Qt3DCore::QEntity(parent);
     _entity->addComponent(_mesh);
